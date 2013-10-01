@@ -27,26 +27,34 @@
 	<div class="col-md-6">
 		
 
-		<form method="POST" action="/">
+		<form method="POST" action="/" role="form">
 			<legend><h3>Share Your Ideas</h3></legend>
+			<div class="form-group">
+				<label for="creator">First Name</label>
+				<input type="text" id="creator" name="creator" class="form-control" value="">
+			</div>
 
-			<label for="creator">First Name</label>
-			<input type="text" id="creator" name="creator" value="">
-			<br>
-			<label for="title">Project Title</label>
-			<input type="text" id="title" name="title">
+			<div class="form-group">
+				<label for="title">Project Title</label>
+				<input type="text" id="title" name="title" class="form-control">
+			</div>
 			
-			<br>
+			<div class="form-group">
+				<label for="idea">Idea description</label>
+				<textarea name="idea" id="name" class="form-control"></textarea>
+			</div>
+
 			<label>Category</label>
-			<span class="help-block">Select as many as you need.</span>
-
-			
+			<p class="help-block">Select as many as you need.</p>
 			{# comment - loop through categories and create checkboxes #}
 			{% for c in categories|sort %}
-			<label class="checkbox">
-			<input type="checkbox" name="categories" value="{{c}}"> {{ c|title }}
-			</label>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="categories" value="{{c}}"> {{ c|title }}
+				</label>
+			</div>
 			{% endfor %}
+
 
 
 			<button type="submit" class="btn btn-primary">Add Idea</button>
