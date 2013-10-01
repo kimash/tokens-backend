@@ -1,45 +1,32 @@
-# -*- coding: utf-8 -*-
 import os, datetime
 import re
-from unidecode import unidecode
-
-
 from flask import Flask, request, render_template, redirect, abort
 
-# import all of mongoengine
-from mongoengine import *
-
-# import data models
-import models
-
-# for json needs
-import json
-from flask import jsonify
-
-import requests
+# mongoengine database module
+from flask.ext.mongoengine import MongoEngine
 
 app = Flask(__name__)   # create our flask app
 app.config['CSRF_ENABLED'] = False
 
 # --------- Database Connection ---------
 # MongoDB connection to MongoLab's database
-connect('mydata', host=os.environ.get('MONGOLAB_URI'))
+app.config['MONGODB_SETTINGS'] = {'HOST':os.environ.get('MONGOLAB_URI'),'DB': 'dwdfall2013'}
 app.logger.debug("Connecting to MongoLabs")
+db = MongoEngine(app) # connect MongoEngine with Flask App
+
+# import data models
+import models
 
 # hardcoded categories for the checkboxes on the form
 categories = ['web','physical computing','software','video','music','installation','assistive technology','developing nations','business','social networks']
 
 # --------- Routes ----------
-
 # this is our main page
 @app.route("/", methods=['GET','POST'])
 def index():
 
-	# get Idea form from models.py
-	idea_form = models.IdeaForm(request.form)
-	
 	# if form was submitted and it is valid...
-	if request.method == "POST" and idea_form.validate():
+	if request.method == "POST":
 	
 		# get form data - create new idea
 		idea = models.Idea()
@@ -196,57 +183,6 @@ def idea_comment(idea_id):
 
 	return redirect('/ideas/%s' % idea.slug)
 
-
-@app.route('/data/ideas')
-def data_ideas():
-	ideas = models.Idea.objects().order_by('+timestamp').limit(10)
-
-	if ideas:
-		public_ideas = []
-
-		#prep data for json
-		for i in ideas:
-			
-			tmpIdea = {
-				'creator' : i.creator,
-				'title' : i.title,
-				'idea' : i.idea,
-				'timestamp' : str( i.timestamp )
-			}
-
-			# comments / our embedded documents
-
-			tmpIdea['comments'] = [] # list - will hold all comment dictionaries
-			
-			# loop through idea comments
-			for c in i.comments:
-				comment_dict = {
-					'name' : c.name,
-					'comment' : c.comment,
-					'timestamp' : str( c.timestamp )
-				}
-
-				# append comment_dict to ['comments']
-				tmpIdea['comments'].append(comment_dict)
-
-			public_ideas.append( tmpIdea )
-
-		# prepare dictionary for JSON return
-		data = {
-			'status' : 'OK',
-			'ideas' : public_ideas
-		}
-
-		# jsonify (imported from Flask above)
-		# will convert 'data' dictionary and 
-		return jsonify(data)
-
-	else:
-		error = {
-			'status' : 'error',
-			'msg' : 'unable to retrieve ideas'
-		}
-		return jsonify(error)
 
 @app.route('/getideas')
 def get_remote_ideas():

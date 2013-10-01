@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
+# mongoengine database module
 from mongoengine import *
-
-from flask.ext.mongoengine.wtf import model_form
 from datetime import datetime
 
 import logging
@@ -31,8 +29,4 @@ class Idea(Document):
 
 	# Timestamp will record the date and time idea was created.
 	timestamp = DateTimeField(default=datetime.now())
-
-
-# Create a Validation Form from the Idea model
-IdeaForm = model_form(Idea)
 
