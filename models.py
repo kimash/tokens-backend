@@ -1,13 +1,7 @@
 # mongoengine database module
 from mongoengine import *
 from datetime import datetime
-
 import logging
-
-# our demo model from week 5 in class
-class Log(Document):
-	text = StringField()
-	timestamp = DateTimeField(default=datetime.now())
 
 class Comment(EmbeddedDocument):
 	name = StringField()

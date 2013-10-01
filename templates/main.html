@@ -1,6 +1,4 @@
-{% from "_form_helpers.html" import render_error, render_textarea %}
-{% extends "layout/main.html" %}
-
+{% extends "layout.html" %}
 
 {% block body %}
 
@@ -8,7 +6,7 @@
 <div class="row">
 
 	<!-- left column -->
-	<div class="span6">
+	<div class="col-md-6">
 		<h3>Submitted Ideas</h3>
 
 		{% for idea in ideas %}
@@ -26,42 +24,18 @@
 		
 	</div>
 
-	<div class="span6">
+	<div class="col-md-6">
 		
 
 		<form method="POST" action="/">
 			<legend><h3>Share Your Ideas</h3></legend>
 
-			{% if form.errors %}
-
-			    <ul class="errors">
-			        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
-			            {% for error in field_errors %}
-			                <li class="alert">{{ form[field_name].label }}: {{ error }}</li>
-			            {% endfor %}
-			        {% endfor %}
-			    </ul>
-			{% endif %}
-
-			{{ form.creator.label(class='myLabelCssClass') }}
-			{{ form.creator(class='myTextboxCssClass') }}
-			{{ render_error(form.creator) }}
-			<!--
 			<label for="creator">First Name</label>
-			<input type="text" id="creator" name="creator" value="{{ form.creator }}">
-			-->
-			
-			{{ form.title.label(class='myLabelCssClass') }}
-			{{ form.title(class='myTextboxCssClass') }}
-			
-			<!--
+			<input type="text" id="creator" name="creator" value="">
+			<br>
 			<label for="title">Project Title</label>
 			<input type="text" id="title" name="title">
-			-->
-			{{ form.idea.label }}
-			{{ render_textarea(form.idea, cols="50", rows="6") }} {# render_textarea inside _form_helpers.html #}
 			
-
 			<br>
 			<label>Category</label>
 			<span class="help-block">Select as many as you need.</span>
@@ -70,7 +44,7 @@
 			{# comment - loop through categories and create checkboxes #}
 			{% for c in categories|sort %}
 			<label class="checkbox">
-			<input type="checkbox" name="categories" value="{{ c|replace(" ","_") }}" {% if c|replace(" ","_") in form.categories.data %}checked=checked{% endif %} > {{ c|title }}
+			<input type="checkbox" name="categories" value="{{c}}"> {{ c|title }}
 			</label>
 			{% endfor %}
 
