@@ -4,8 +4,10 @@
 
 Adding Mongoengine to requirements.txt
 
-	Mongoengine==0.7.5
-	unidecode
+	Flask==0.10
+	Mongoengine==0.8.4
+	Flask-mongoengine==0.7
+	Unidecode==0.04.14
 
 
 ## Getting Started with MongoDB on Heroku
@@ -14,7 +16,7 @@ We will be using MongoLabs as our MongoDB host service, they have a free starter
 
 ### Step 1 : Download code, setup Git, heroku create
 
-1. Download the sample code from [Github](https://github.com/johnschimmel/ITP-DWD-Fall-2012-Week-5)
+1. Download the sample code from [Github](https://github.com/johnschimmel/ITP-Python-Databases-Week5)
 2. Navigate to code directory in Terminal. Create Git repo
 
 		git init
@@ -42,7 +44,7 @@ To install the MongoLabs
 * Navigate to the code folder of your app
 * In Terminal, add the MongoLab starter plan
 
-		heroku addons:add mongolab:starter
+		heroku addons:add mongolab:sandbox
 
 This has added MongoLab to your app.
 

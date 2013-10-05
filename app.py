@@ -3,12 +3,12 @@ import re
 from flask import Flask, request, render_template, redirect, abort
 from unidecode import unidecode
 
-
 # mongoengine database module
 from flask.ext.mongoengine import MongoEngine
 
+
 app = Flask(__name__)   # create our flask app
-app.config['CSRF_ENABLED'] = False
+# app.config['CSRF_ENABLED'] = False
 
 # --------- Database Connection ---------
 # MongoDB connection to MongoLab's database
@@ -59,6 +59,8 @@ def index():
 			'ideas' : models.Idea.objects(),
 			'categories' : categories
 		}
+		app.logger.debug(templateData)
+
 		return render_template("main.html", **templateData)
 
 # Display all ideas for a specific category
@@ -92,13 +94,13 @@ def idea_display(idea_slug):
 
 	# get idea by idea_slug
 	try:
-		idea = models.Idea.objects.get(slug=idea_slug)
+		ideasList = models.Idea.objects(slug=idea_slug)
 	except:
 		abort(404)
 
 	# prepare template data
 	templateData = {
-		'idea' : idea
+		'idea' : ideasList[0]
 	}
 
 	# render and return the template
