@@ -28,3 +28,13 @@ class Idea(Document):
 
 # Create a Validation Form from the Idea model
 IdeaForm = model_form(Idea)
+
+
+
+
+
+
+
+
+
+
