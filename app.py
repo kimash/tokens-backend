@@ -8,7 +8,8 @@ from flask.ext.mongoengine import MongoEngine
 
 
 app = Flask(__name__)   # create our flask app
-# app.config['CSRF_ENABLED'] = False
+app.config['CSRF_ENABLED'] = True
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # --------- Database Connection ---------
 # MongoDB connection to MongoLab's database
@@ -27,8 +28,10 @@ categories = ['web','physical computing','software','video','music','installatio
 @app.route("/", methods=['GET','POST'])
 def index():
 
+	idea_form = models.IdeaForm(request.form)
+
 	# if form was submitted and it is valid...
-	if request.method == "POST":
+	if request.method == "POST" and idea_form.validate():
 	
 		# get form data - create new idea
 		idea = models.Idea()
@@ -57,9 +60,11 @@ def index():
 		# render the template
 		templateData = {
 			'ideas' : models.Idea.objects(),
-			'categories' : categories
+			'categories' : categories,
+			'form' : idea_form
 		}
-		app.logger.debug(templateData)
+		
+		# app.logger.debug(templateData)
 
 		return render_template("main.html", **templateData)
 

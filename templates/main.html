@@ -39,20 +39,44 @@
 	<div class="col-md-6">
 
 		<form method="POST" role="form">
+			{{ form.csrf_token }}
+
 			<legend><h3>Share Your Ideas</h3></legend>
+
+			{% if form.errors %}
+			    <ul class="errors">
+			        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+			            {% for error in field_errors %}
+			                <li>{{ form[field_name].label }}: {{ error }}</li>
+			            {% endfor %}
+			        {% endfor %}
+			    </ul>
+			{% endif %}
+
 			<div class="form-group">
+				{{ form.creator.label() }}
+				{{ form.creator(class='form-control', type='textinput') }}
+				<!--
 				<label for="creator">First Name</label>
-				<input type="text" id="creator" name="creator" class="form-control" value="">
+				<input type="text" id="creator" name="creator" class="form-control" value=""> 
+				-->
 			</div>
 
 			<div class="form-group">
+				{{ form.title.label() }}
+				{{ form.title(class='form-control', type='textinput') }}
+				<!-- 
 				<label for="title">Project Title</label>
 				<input type="text" id="title" name="title" class="form-control">
+				-->
 			</div>
 			
 			<div class="form-group">
-				<label for="idea">Idea description</label>
+				{{ form.idea.label() }}
+				{{ form.idea(class='form-control', type='textarea') }}
+				<!-- <label for="idea">Idea description</label>
 				<textarea name="idea" id="idea" class="form-control"></textarea>
+				-->
 			</div>
 
 			<label>Category</label>
@@ -61,7 +85,10 @@
 			{% for c in categories|sort %}
 			<div class="checkbox">
 				<label>
-					<input type="checkbox" name="categories" value="{{c}}"> {{ c|title }}
+					<input type="checkbox" \
+						name="categories" 
+						value="{{ c|replace(" ","_") }}" {% if c|replace(" ","_") in form.categories.data %}checked=checked{% endif %}
+					> {{ c|title }}
 				</label>
 			</div>
 			{% endfor %}
