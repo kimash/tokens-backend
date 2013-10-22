@@ -119,7 +119,7 @@ def idea_edit(idea_id):
 
 	if request.method == 'POST':
 		try:
-			idea = models.Idea.objects.get(id=request.form.get('idea_id'))
+			idea = models.Idea.objects.get(id=idea_id)
 		except:
 			abort(404)
 
@@ -141,6 +141,16 @@ def idea_edit(idea_id):
 			# redirect to the GET method of the current page
 			return redirect('/ideas/edit/%s' % idea.id )
 
+		else:
+
+			# error display form with errors
+			templateData = {
+				'idea_id' : idea.id,
+				'form' : ideaForm,
+				'categories' : categories
+			}
+
+			return render_template('idea_edit.html', **templateData)
 
 	else:
 		# get the idea convert it to the model form, this prepopulates the form
