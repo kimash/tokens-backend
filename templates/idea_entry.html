@@ -8,7 +8,9 @@
 	<!-- left column -->
 	<div class="col-md-12">
 		<h2>IDEA: {{ idea.title }}</h2>
-		<p>By {{ idea.creator }}</p>
+		<p>
+			By {{ idea.creator }} (<a href="/ideas/edit/{{idea.id}}">edit</a>)
+		</p>
 		<hr>
 		<p>{{ idea.idea }}</p>
 		<p>

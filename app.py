@@ -1,6 +1,6 @@
 import os, datetime
 import re
-from flask import Flask, request, render_template, redirect, abort
+from flask import Flask, request, render_template, redirect, abort, flash
 from unidecode import unidecode
 
 # mongoengine database module
@@ -110,6 +110,52 @@ def idea_display(idea_slug):
 
 	# render and return the template
 	return render_template('idea_entry.html', **templateData)
+
+@app.route("/ideas/edit/<idea_id>", methods=['GET','POST'])
+def idea_edit(idea_id):
+
+	if request.method == 'POST':
+		try:
+			idea = models.Idea.objects.get(id=request.form.get('idea_id'))
+		except:
+			abort(404)
+
+		# populate the IdeaForm with incoming form data
+		ideaForm = models.IdeaForm(request.form)
+
+		if ideaForm.validate():
+			updateData = {
+				'set__title' : request.form.get('title'),
+				'set__creator' : request.form.get('creator'),
+				'set__idea' : request.form.get('idea'),
+				'set__categories' : request.form.getlist('categories')
+			}
+			idea.update(**updateData) # update the idea
+			
+			# flash message
+			flash('Idea was updated')
+
+			# redirect to the GET method of the current page
+			return redirect('/ideas/edit/%s' % idea.id )
+
+
+	else:
+		# get the idea convert it to the model form, this prepopulates the form
+		try:
+			idea = models.Idea.objects.get(id=idea_id)
+			ideaForm = models.IdeaForm(obj=idea)
+
+		except:
+			abort(404)
+
+		templateData = {
+			'idea_id' : idea.id,
+			'form' : ideaForm,
+			'categories' : categories
+		}
+
+		return render_template('idea_edit.html', **templateData)
+
 
 @app.route("/ideas/<idea_id>/comment", methods=['POST'])
 def idea_comment(idea_id):
