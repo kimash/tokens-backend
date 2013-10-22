@@ -24,7 +24,7 @@ import models
 categories = ['web','physical computing','software','video','music','installation','assistive technology','developing nations','business','social networks']
 
 # --------- Routes ----------
-# this is our main page
+# this is our main pagex
 @app.route("/", methods=['GET','POST'])
 def index():
 
@@ -75,6 +75,9 @@ def by_category(cat_name):
 	# try and get ideas where cat_name is inside the categories list
 	try:
 		ideas = models.Idea.objects(categories=cat_name)
+
+		for idea in ideas:
+			app.logger.debug(idea.title)
 
 	# not found, abort w/ 404 page
 	except:
