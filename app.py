@@ -1,6 +1,7 @@
 import os, datetime
 import re
-from flask import Flask, request, render_template, redirect, abort, flash
+from flask import Flask, request, render_template, redirect, abort, flash, json
+
 from unidecode import unidecode
 
 # mongoengine database module
@@ -202,10 +203,104 @@ def idea_comment(idea_id):
 
 	return redirect('/ideas/%s' % idea.slug)
 
+from flask import jsonify
+
+
+@app.route('/data/ideas')
+def data_ideas():
+
+	# query for the ideas - return oldest first, limit 10
+	ideas = models.Idea.objects().order_by('+timestamp').limit(10)
+
+	if ideas:
+
+		# list to hold ideas
+		public_ideas = []
+
+		#prep data for json
+		for i in ideas:
+			tmpIdea = ideaToDict(i)
+			
+			# insert idea dictionary into public_ideas list
+			public_ideas.append( tmpIdea )
+
+		# prepare dictionary for JSON return
+		data = {
+			'status' : 'OK',
+			'ideas' : public_ideas
+		}
+
+		# jsonify (imported from Flask above)
+		# will convert 'data' dictionary and set mime type to 'application/json'
+		return jsonify(data)
+
+	else:
+		error = {
+			'status' : 'error',
+			'msg' : 'unable to retrieve ideas'
+		}
+		return jsonify(error)
+
+@app.route('/data/ideas/<id>')
+def data_idea(id):
+		
+
+	# query for the ideas - return oldest first, limit 10
+	try:
+		idea = models.Idea.objects.get(id=id)
+		if idea:
+			tmpIdea = ideaToDict(idea)
+			
+			# prepare dictionary for JSON return
+			data = {
+				'status' : 'OK',
+				'idea' : tmpIdea
+			}
+
+			# jsonify (imported from Flask above)
+			# will convert 'data' dictionary and set mime type to 'application/json'
+			return jsonify(data)
+
+	except:
+		error = {
+			'status' : 'error',
+			'msg' : 'unable to retrieve ideas'
+		}
+		return jsonify(error)
+
+
+
 
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
+
+
+def ideaToDict(idea):
+	# create a dictionary
+	tmpIdea = {
+		'id' : str(idea.id),
+		'creator' : idea.creator,
+		'title' : idea.title,
+		'idea' : idea.idea,
+		'timestamp' : str( idea.timestamp )
+	}
+
+	# comments / our embedded documents
+	tmpIdea['comments'] = [] # list - will hold all comment dictionaries
+	
+	# loop through idea comments
+	for c in idea.comments:
+		comment_dict = {
+			'name' : c.name,
+			'comment' : c.comment,
+			'timestamp' : str( c.timestamp )
+		}
+
+		# append comment_dict to ['comments']
+		tmpIdea['comments'].append(comment_dict)
+
+	return tmpIdea
 
 
 # slugify the title 
