@@ -1,36 +1,51 @@
-## MongoDB library - Mongoengine
+## Tokens Game - Back-End Web UI
 
-[Mongoengine](http://mongoengine.org/)
-
-Adding Mongoengine to requirements.txt
-
-	Flask==0.10
-	Mongoengine==0.8.4
-	Flask-mongoengine==0.7
-	Unidecode==0.04.14
+[Live Site](http://tokensgame-web-ui.herokuapp.com/)
 
 
-## Getting Started with MongoDB on Heroku
+### Description
 
-We will be using MongoLabs as our MongoDB host service, they have a free starter plan that we can easily associate with our Heroku accounts. When we have added the MongoLabs service we will have a connection string that includes username, password and URI to the database server.
+This web UI allows users to create a series of game rounds for a public policy tokens game. Each round has a series of yes/no questions. Each answer returns a different outcome with respect to the tokens affected. Some answers will add tokens, others will subtract them. For example:
 
-### Step 1 : Download code, setup Git, heroku create
+* Should we build more schools?
 
-1. Download the sample code from [Github](https://github.com/johnschimmel/ITP-Python-Databases-Week5)
-2. Navigate to code directory in Terminal. Create Git repo
+	- income tax: Yes: +5, No: -3 
+    - education level: Yes: +3, No: -4 
+    - public health: Yes: +2, No: -5 
+    - entrepreneurship: Yes: +3, No: -1 
+    - community art: Yes: -3, No: +4 
+    - immigration: Yes: 0, No: 0
+    
+Front-end implementation can be found here:
 
-		git init
-		git add .
-		git commit -m "initial commit"
+### License
 
-	Create virtual environment and install requirements
+This is free and unencumbered software released into the public domain.
 
-		virtualenv venv
-		. runpip
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
 
-3. Create a new Heroku app
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
 
-		heroku create
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org>
+
+
 
 
 ### Step 2 : Adding MongoLabs to your Heroku App
@@ -46,39 +61,3 @@ To install the MongoLabs
 
 		heroku addons:add mongolab:sandbox
 
-This has added MongoLab to your app.
-
-### Step 3: Configure your local environment
-
-When adding Add-ons, Heroku will add the required configuration variables for the services including username, password, urls, etc. 
-
-We must create a local configuration file to allow our local development server to connect to the MongoLabs MongoDB instance. We can grab a copy of our Heroku configuration variables and put them inside a **.env** file, our environment variable file.
-
-Run the following command inside your code folder.
-
-	heroku config --shell | grep MONGOLAB_URI > .env
-
-This will create a new file, **.env**  and it will contain a single line starting with MONGOLAB_URI and followed by a long connection url. This is the username and password for your MongoLabs account.
-
-.env
-
-	MONGOLAB_URI=mongodb://heroku_app8083291:sadlfkweweroi........
-
-### Step 4: Add .env to .gitignore file
-
-We want GIT to ignore the .env file, **VERY IMPORTANT**  This keeps our environment variables safe and they won't get included inside our GIT repository (or worse, get pushed to Github).
-
-Open your .gitignore file and add '.env' on a new line. Save the file.
-
-.gitignore
-
-	.env
-
-
-### Step 5: Start your servers
-
-	. start
-
-or
-
-	foreman start

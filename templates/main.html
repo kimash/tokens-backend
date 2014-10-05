@@ -41,7 +41,7 @@
 			{% endif %}
 
 			<div class="form-group">
-				{{ form.title.label() }}
+				{{ form.title.label('Round Title') }}
 				{{ form.title(class='form-control', type='text') }}
 				<!-- 
 				<label for="title">Project Title</label>
@@ -50,8 +50,8 @@
 			</div>
 			
 			<div class="form-group">
-				{{ form.numQ.label() }}
-				{{ form.numQ(class='form-control') }}
+				{{ form.numQ.label('Number of Questions') }}
+				{{ form.numQ(class='form-control', type='text') }}
 				<!-- <label for="idea">Idea description</label>
 				<textarea name="idea" id="idea" class="form-control"></textarea>
 				-->
