@@ -58,7 +58,6 @@ def index():
 		# render the template
 		templateData = {
 			'rounds' : models.Round.objects(),
-			'title' : title,
 			'form' : round_form
 		}
 		
