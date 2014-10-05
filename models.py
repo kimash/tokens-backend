@@ -5,29 +5,25 @@ from flask.ext.mongoengine.wtf import model_form
 from datetime import datetime
 import logging
 
-class Comment(EmbeddedDocument):
-	name = StringField()
-	comment = StringField()
-	timestamp = DateTimeField(default=datetime.now())
+class Question(EmbeddedDocument):
+	qText = StringField(max_length=120, required=True)	# question to ask
+	yesTokens = IntField(min_value=0, max_value=5, required=True)	# yes token value
+	noTokens = IntField(min_value=0, max_value=5, required=True)	# no token value
 	
-class Idea(Document):
+class Round(Document):
+	title = StringField(max_length=120)	# give the round a title
+	numQ = IntField(min_value=1, max_value=5)	# number of questions in round
+	questions = ListField( EmbeddedDocumentField(Question) )	# list of questions
+	slug = StringField()	# slug for URL
+	
+	# total number of yes tokens above, i.e. max number of tokens for game
+	maxTokens = IntField()
+	
+	# for int y in EmbeddedDocumentField(yesTokens)
 
-	creator = StringField(max_length=120, required=True, verbose_name="First name")
-	title = StringField(max_length=120, required=True)
-	slug = StringField()
-	idea = StringField(required=True, verbose_name="What is your idea?")
-
-	# Category is a list of Strings
-	categories = ListField(StringField(max_length=30))
-
-	# Comments is a list of Document type 'Comments' defined above
-	comments = ListField( EmbeddedDocumentField(Comment) )
-
-	# Timestamp will record the date and time idea was created.
-	timestamp = DateTimeField(default=datetime.now())
-
-# Create a Validation Form from the Idea model
-IdeaForm = model_form(Idea)
+# Validation Form for above data
+RoundForm = model_form(Round)
+#QForm = model_form(Question)
 
 
 

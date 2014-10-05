@@ -19,7 +19,7 @@
 		<form method="POST" role="form">
 			{{ form.csrf_token }}
 
-			<legend><h3>Share Your Ideas</h3></legend>
+			<legend><h3>Game Rounds</h3></legend>
 
 			{% if form.errors %}
 			    <ul class="errors">
@@ -32,8 +32,8 @@
 			{% endif %}
 
 			<div class="form-group">
-				{{ form.creator.label() }}
-				{{ form.creator(class='form-control', type='text') }}
+				{{ form.title.label() }}
+				{{ form.title(class='form-control', type='text') }}
 				
 				<!--
 				<label for="creator">First Name</label>
@@ -42,8 +42,8 @@
 			</div>
 
 			<div class="form-group">
-				{{ form.title.label() }}
-				{{ form.title(class='form-control', type='text') }}
+				{{ form.numQ.label() }}
+				{{ form.numQ(class='form-control', type='text') }}
 				<!-- 
 				<label for="title">Project Title</label>
 				<input type="text" id="title" name="title" class="form-control">
@@ -58,24 +58,10 @@
 				-->
 			</div>
 
-			<label>Category</label>
-			<p class="help-block">Select as many as you need.</p>
-			{# comment - loop through categories and create checkboxes #}
-			{% for c in categories|sort %}
-			<div class="checkbox">
-				<label>
-					<input type="checkbox" \
-						name="categories" 
-						value="{{ c|replace(" ","_") }}" {% if c|replace(" ","_") in form.categories.data %}checked=checked{% endif %}
-					> {{ c|title }}
-				</label>
-			</div>
-			{% endfor %}
-
-			<input type='hidden' value='{{ idea_id }}' name='idea_id'>
+			<input type='hidden' value='{{ round_id }}' name='round_id'>
 
 
-			<button type="submit" class="btn btn-primary">Update Idea</button>
+			<button type="submit" class="btn btn-primary">Update Round</button>
 		</form>
 	</div>
 

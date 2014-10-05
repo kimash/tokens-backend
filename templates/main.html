@@ -5,32 +5,18 @@
 
 	<!-- left column -->
 	<div class="col-md-6">
-		<h3>Submitted Ideas</h3>
+		<h3>Rounds</h3>
 		
-		(<a href="/data/ideas">JSON</a>)
+		(<a href="/data/rounds">JSON</a>)
 		<hr>
 		
-		{% for idea in ideas %}
+		{% for round in rounds %}
 			<h4>
-				<a href="/ideas/{{ idea.slug }}">{{ idea.title }}</a>
+				<a href="/rounds/{{ round.slug }}">{{ round.title }}</a>
 			</h4>
-			<p>by {{ idea.creator }}</p>
-			<p>
-			
-			<ul>
-				{% for cat in idea.categories %}
-				<li>
-					<a href="/category/{{ cat}}">
-						{{ cat|replace("_"," ")}}
-					</a>
-				</li>
-					
-				{% endfor %}
-			</ul>
+			<p>Number of Questions: {{ round.numQ }}</p>
+			<p><a class="label" href="/rounds/{{ round.slug }}/edit">edit</a></p>
 
-			<a class="label" href="/ideas/{{ idea.slug }}/edit">edit</a>
-			</p>
-			
 			<hr/>
 		{% endfor %}
 		
@@ -42,7 +28,7 @@
 		<form method="POST" role="form">
 			{{ form.csrf_token }}
 
-			<legend><h3>Share Your Ideas</h3></legend>
+			<legend><h3>Add New Round</h3></legend>
 
 			{% if form.errors %}
 			    <ul class="errors">
@@ -55,16 +41,6 @@
 			{% endif %}
 
 			<div class="form-group">
-				{{ form.creator.label() }}
-				{{ form.creator(class='form-control', type='text') }}
-				
-				<!--
-				<label for="creator">First Name</label>
-				<input type="text" id="creator" name="creator" class="form-control" value=""> 
-				-->
-			</div>
-
-			<div class="form-group">
 				{{ form.title.label() }}
 				{{ form.title(class='form-control', type='text') }}
 				<!-- 
@@ -74,30 +50,16 @@
 			</div>
 			
 			<div class="form-group">
-				{{ form.idea.label() }}
-				{{ form.idea(class='form-control') }}
+				{{ form.numQ.label() }}
+				{{ form.numQ(class='form-control') }}
 				<!-- <label for="idea">Idea description</label>
 				<textarea name="idea" id="idea" class="form-control"></textarea>
 				-->
 			</div>
 
-			<label>Category</label>
-			<p class="help-block">Select as many as you need.</p>
-			{# comment - loop through categories and create checkboxes #}
-			{% for c in categories|sort %}
-			<div class="checkbox">
-				<label>
-					<input type="checkbox" \
-						name="categories" 
-						value="{{ c|replace(" ","_") }}" {% if c|replace(" ","_") in form.categories.data %}checked=checked{% endif %}
-					> {{ c|title }}
-				</label>
-			</div>
-			{% endfor %}
 
 
-
-			<button type="submit" class="btn btn-primary">Add Idea</button>
+			<button type="submit" class="btn btn-primary">Add Round</button>
 		</form>
 	</div>
 

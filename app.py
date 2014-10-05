@@ -14,38 +14,35 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # --------- Database Connection ---------
 # MongoDB connection to MongoLab's database
-app.config['MONGODB_SETTINGS'] = {'HOST':os.environ.get('MONGOLAB_URI'),'DB': 'dwdfall2013'}
+app.config['MONGODB_SETTINGS'] = {'HOST':os.environ.get('MONGOLAB_URI'),'DB': 'tokensGame'}
 app.logger.debug("Connecting to MongoLabs")
 db = MongoEngine(app) # connect MongoEngine with Flask App
 
 # import data models
 import models
 
-# hardcoded categories for the checkboxes on the form
-categories = ['web','physical computing','software','video','music','installation','assistive technology','developing nations','business','social networks']
 
 # --------- Routes ----------
 # this is our main pagex
 @app.route("/", methods=['GET','POST'])
 def index():
 
-	idea_form = models.IdeaForm(request.form)
+	round_form = models.RoundForm(request.form)
 
 	# if form was submitted and it is valid...
-	if request.method == "POST" and idea_form.validate():
+	if request.method == "POST" and round_form.validate():
 	
-		# get form data - create new idea
-		idea = models.Idea()
-		idea.creator = request.form.get('creator','anonymous')
-		idea.title = request.form.get('title','no title')
-		idea.slug = slugify(idea.title + " " + idea.creator)
-		idea.idea = request.form.get('idea','')
-		idea.categories = request.form.getlist('categories') # getlist will pull multiple items 'categories' into a list
+		# create new round
+		round = models.Round()
+		round.title = request.form.get('title','no title')
+		round.numQ = request.form.get('number of questions')
+		round.slug = slugify(round.title)
+		round.maxTokens = 0
 		
-		idea.save() # save it
+		round.save() # save it
 
-		# redirect to the new idea page
-		return redirect('/ideas/%s' % idea.slug)
+		# redirect to the new round page
+		return redirect('/rounds/%s' % round.title)
 
 	else:
 
@@ -53,181 +50,158 @@ def index():
 		# prepare checklist items for form
 		# you'll need to take the form checkboxes submitted
 		# and idea_form.categories list needs to be populated.
-		if request.method=="POST" and request.form.getlist('categories'):
-			for c in request.form.getlist('categories'):
-				idea_form.categories.append_entry(c)
+		#if request.method=="POST" and request.form.getlist('categories'):
+			#for c in request.form.getlist('categories'):
+				#idea_form.categories.append_entry(c)
 
 
 		# render the template
 		templateData = {
-			'ideas' : models.Idea.objects(),
-			'categories' : categories,
-			'form' : idea_form
+			'rounds' : models.Round.objects(),
+			'title' : title,
+			'form' : round_form
 		}
 		
 		# app.logger.debug(templateData)
 
 		return render_template("main.html", **templateData)
 
-# Display all ideas for a specific category
-@app.route("/category/<cat_name>")
-def by_category(cat_name):
 
-	# try and get ideas where cat_name is inside the categories list
+@app.route("/rounds/<round_slug>")
+def round_display(round_slug):
+
+	# get round by round_slug
 	try:
-		ideas = models.Idea.objects(categories=cat_name)
-
-		for idea in ideas:
-			app.logger.debug(idea.title)
-
-	# not found, abort w/ 404 page
-	except:
-		abort(404)
-
-	# prepare data for template
-	templateData = {
-		'current_category' : {
-			'slug' : cat_name,
-			'name' : cat_name.replace('_',' ')
-		},
-		'ideas' : ideas,
-		'categories' : categories
-	}
-
-	# render and return template
-	return render_template('category_listing.html', **templateData)
-
-
-@app.route("/ideas/<idea_slug>")
-def idea_display(idea_slug):
-
-	# get idea by idea_slug
-	try:
-		ideasList = models.Idea.objects(slug=idea_slug)
+		roundsList = models.Round.objects(slug=round_slug)
 	except:
 		abort(404)
 
 	# prepare template data
 	templateData = {
-		'idea' : ideasList[0]
+		'round' : roundsList[0]
 	}
 
 	# render and return the template
 	return render_template('idea_entry.html', **templateData)
 
-@app.route("/ideas/edit/<idea_id>", methods=['GET','POST'])
-def idea_edit(idea_id):
+@app.route("/rounds/edit/<round_id>", methods=['GET','POST'])
+def round_edit(round_id):
 
 	if request.method == 'POST':
 		try:
-			idea = models.Idea.objects.get(id=idea_id)
+			idea = models.Round.objects.get(id=round_id)
 		except:
 			abort(404)
 
-		# populate the IdeaForm with incoming form data
-		ideaForm = models.IdeaForm(request.form)
+		# populate the RoundForm with incoming form data
+		roundForm = models.RoundForm(request.form)
 
 		if ideaForm.validate():
 			updateData = {
 				'set__title' : request.form.get('title'),
-				'set__creator' : request.form.get('creator'),
-				'set__idea' : request.form.get('idea'),
-				'set__categories' : request.form.getlist('categories')
+				'set__numQ' : request.form.get('number of questions'),
 			}
 			idea.update(**updateData) # update the idea
 			
 			# flash message
-			flash('Idea was updated')
+			flash('Round updated')
 
 			# redirect to the GET method of the current page
-			return redirect('/ideas/edit/%s' % idea.id )
+			return redirect('/rounds/edit/%s' % round.id )
 
 		else:
 
 			# error display form with errors
 			templateData = {
-				'idea_id' : idea.id,
-				'form' : ideaForm,
-				'categories' : categories
+				'round_id' : round.id,
+				'form' : roundForm
 			}
 
 			return render_template('idea_edit.html', **templateData)
 
 	else:
-		# get the idea convert it to the model form, this prepopulates the form
+		# get the round convert it to the model form, this prepopulates the form
 		try:
-			idea = models.Idea.objects.get(id=idea_id)
-			ideaForm = models.IdeaForm(obj=idea)
+			round = models.Round.objects.get(id=round_id)
+			roundForm = models.RoundForm(obj=round)
 
 		except:
 			abort(404)
 
 		templateData = {
-			'idea_id' : idea.id,
-			'form' : ideaForm,
-			'categories' : categories
+			'round_id' : round.id,
+			'form' : roundForm
 		}
 
 		return render_template('idea_edit.html', **templateData)
 
 
-@app.route("/ideas/<idea_id>/comment", methods=['POST'])
-def idea_comment(idea_id):
+@app.route("/rounds/<round_id>/questions", methods=['POST'])
+def round_questions(round_id):
 
-	name = request.form.get('name')
-	comment = request.form.get('comment')
+	#for n in range(round.numQ):
+	qText = request.form.get('qText')
+	yesTokens = request.form.get('0 to 5')
+	noTokens = request.form.get('0 to 5')
 
-	if name == '' or comment == '':
+	if question == '' or yesTokens == '' or noTokens == '':
 		# no name or comment, return to page
 		return redirect(request.referrer)
 
 
-	#get the idea by id
+	#get the round by id
 	try:
-		idea = models.Idea.objects.get(id=idea_id)
+		idea = models.Round.objects.get(id=round_id)
 	except:
 		# error, return to where you came from
 		return redirect(request.referrer)
 
 
-	# create comment
-	comment = models.Comment()
-	comment.name = request.form.get('name')
-	comment.comment = request.form.get('comment')
+	# create questions
+	yCount = 0
 	
-	# append comment to idea
-	idea.comments.append(comment)
+	for n in range(round.numQ):
+		question[n] = models.Question()
+		question[n].qText = request.form.get('qText')
+		question[n].yesTokens = request.form.get('0 to 5')
+		question[n].noTokens = request.form.get('0 to 5')			
+		# append comment to idea
+		round.questions.append(question[n])
+		yCount += question[n].yesTokens
+		
+	round.maxTokens = yCount
 
 	# save it
-	idea.save()
+	round.save()
 
-	return redirect('/ideas/%s' % idea.slug)
+	return redirect('/rounds/%s' % round.slug)
+
 
 from flask import jsonify
 
 
-@app.route('/data/ideas')
-def data_ideas():
+@app.route('/data/rounds')
+def data_rounds():
 
-	# query for the ideas - return oldest first, limit 10
-	ideas = models.Idea.objects().order_by('+timestamp').limit(10)
+	# query for the ideas
+	rounds = models.Round.objects().limit(20)
 
-	if ideas:
+	if rounds:
 
 		# list to hold ideas
-		public_ideas = []
+		public_rounds = []
 
 		#prep data for json
-		for i in ideas:
-			tmpIdea = ideaToDict(i)
+		for r in rounds:
+			tmpRound = roundToDict(r)
 			
 			# insert idea dictionary into public_ideas list
-			public_ideas.append( tmpIdea )
+			public_rounds.append( tmpRound )
 
 		# prepare dictionary for JSON return
 		data = {
 			'status' : 'OK',
-			'ideas' : public_ideas
+			'rounds' : public_rounds
 		}
 
 		# jsonify (imported from Flask above)
@@ -241,20 +215,20 @@ def data_ideas():
 		}
 		return jsonify(error)
 
-@app.route('/data/ideas/<id>')
-def data_idea(id):
+@app.route('/data/rounds/<id>')
+def data_round(id):
 		
 
 	# query for the ideas - return oldest first, limit 10
 	try:
-		idea = models.Idea.objects.get(id=id)
-		if idea:
-			tmpIdea = ideaToDict(idea)
+		round = models.Round.objects.get(id=id)
+		if round:
+			tmpRound = roundToDict(round)
 			
 			# prepare dictionary for JSON return
 			data = {
 				'status' : 'OK',
-				'idea' : tmpIdea
+				'round' : tmpRound
 			}
 
 			# jsonify (imported from Flask above)
@@ -276,31 +250,30 @@ def page_not_found(error):
     return render_template('404.html'), 404
 
 
-def ideaToDict(idea):
+def roundToDict(round):
 	# create a dictionary
-	tmpIdea = {
-		'id' : str(idea.id),
-		'creator' : idea.creator,
-		'title' : idea.title,
-		'idea' : idea.idea,
-		'timestamp' : str( idea.timestamp )
+	tmpRound = {
+		'id' : str(round.id),
+		'title' : round.title,
+		'numQ' : round.numQ,
+		'maxTokens' : round.maxTokens
 	}
 
-	# comments / our embedded documents
-	tmpIdea['comments'] = [] # list - will hold all comment dictionaries
+	# questions - embedded documents
+	tmpRound['questions'] = [] # list - will hold all comment dictionaries
 	
-	# loop through idea comments
-	for c in idea.comments:
-		comment_dict = {
-			'name' : c.name,
-			'comment' : c.comment,
-			'timestamp' : str( c.timestamp )
+	# loop through round questions
+	for q in round.questions:
+		question_dict = {
+			'text' : q.qText,
+			'yesTokens' : q.yesTokens,
+			'noTokens' : q.noTokens
 		}
 
 		# append comment_dict to ['comments']
-		tmpIdea['comments'].append(comment_dict)
+		tmpRound['questions'].append(question_dict)
 
-	return tmpIdea
+	return tmpRound
 
 
 # slugify the title 
