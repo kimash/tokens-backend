@@ -44,20 +44,3 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org>
-
-
-
-
-### Step 2 : Adding MongoLabs to your Heroku App
-
-Heroku offers a [lot of different Add-ons](https://addons.heroku.com/) for your apps. Many different types of databases, image tools, cache utilities are available from 3rd party companies. Many offer a trial plan to test and develop with before you commit to a paid plan.
-
-MongoLabs offers a [500MB MongoDB instance for free](https://addons.heroku.com/mongolab) (see here) : ) How wonderful.
-
-To install the MongoLabs 
-
-* Navigate to the code folder of your app
-* In Terminal, add the MongoLab starter plan
-
-		heroku addons:add mongolab:sandbox
-
