@@ -5,21 +5,24 @@ from flask.ext.mongoengine.wtf import model_form
 from datetime import datetime
 import logging
 
+class Token(Document):
+	name = StringField(max_length=120, required=True) # token name
+
+class TokenVal(EmbeddedDocument):
+	tokenName = ListField( ReferenceField(Token) ) # token name
+	yesVal = IntField(min_value=-5, max_value=5, required=True)	# number of tokens for yes
+	noVal = IntField(min_value=-5, max_value=5, required=True)	# number of tokens for no
+
 class Question(EmbeddedDocument):
 	qText = StringField(max_length=120, required=True)	# question to ask
-	yesTokens = IntField(min_value=0, max_value=5, required=True)	# yes token value
-	noTokens = IntField(min_value=0, max_value=5, required=True)	# no token value
+	tokenVals = ListField( EmbeddedDocumentField(TokenVal) )	# list of affected tokens
 	
 class Round(Document):
 	title = StringField(max_length=120)	# give the round a title
-	numQ = IntField(min_value=1, max_value=5)	# number of questions in round
-	questions = ListField( EmbeddedDocumentField(Question) )	# list of questions
+	#numQ = IntField(min_value=1)	# number of questions in round
 	slug = StringField()	# slug for URL
-	
-	# total number of yes tokens above, i.e. max number of tokens for game
-	maxTokens = IntField()
-	
-	# for int y in EmbeddedDocumentField(yesTokens)
+	questions = ListField( EmbeddedDocumentField(Question) )	# list of questions
+	tokens = ListField( ReferenceField(Token) ) # allows users to specify tokens for round
 
 # Validation Form for above data
 RoundForm = model_form(Round)

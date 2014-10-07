@@ -9,8 +9,7 @@
 	<div class="col-md-12">
 		<h2>ROUND: {{ round.title }}</h2>
 		<p>
-			Number of questions: {{ round.numQ }} 
-			Max tokens: {{ round.maxTokens }}
+			Tokens: {{ round.tokens }} 
 			(<a href="/rounds/edit/{{round.id}}">edit</a>)  
 			(<a href="/data/rounds/{{round.id}}">JSON</a>)  
 
@@ -24,9 +23,8 @@
 				{% for question in round.questions %}
 				<div class="comment">
 					<p>Question: {{ question.qText }}</p>
-					<p>Yes tokens: {{ question.yesTokens }}</p>
-					<p>No tokens: {{ question.noTokens }}</p>
-					<!--<p><small>{{ comment.timestamp.strftime("%a %m/%d %I:%M%p ") }}</small></p>-->
+					<!--<p>Yes tokens: {{ question.yesTokens }}</p>
+					<p>No tokens: {{ question.noTokens }}</p>-->
 				</div>
 				
 				{% endfor %}
@@ -38,10 +36,10 @@
 					<label for="qText">Question text:</label>
 					<input type="text" id="qText" name="qText">
 					<br>
-					<label for="yesTokens">Yes Tokens</label>
+					<!--<label for="yesTokens">Yes Tokens</label>
 					<input type="text" id="yesTokens" name="yesTokens">
 					<label for="noTokens">No Tokens</label>
-					<input type="text" id="noTokens" name="noTokens">
+					<input type="text" id="noTokens" name="noTokens">-->
 					
 					<label>
 					<button type="submit" class="btn btn-success">Add Question</button>

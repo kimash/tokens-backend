@@ -23,7 +23,7 @@ import models
 
 
 # --------- Routes ----------
-# this is our main pagex
+# this is our main page
 @app.route("/", methods=['GET','POST'])
 def index():
 
@@ -35,53 +35,24 @@ def index():
 		# create new round
 		round = models.Round()
 		round.title = request.form.get('title','no title')
-		round.numQ = request.form.get('number of questions')
 		round.slug = slugify(round.title)
-		round.maxTokens = 0
+		round.questions = {}
+		round.tokens = {}
 		
 		round.save() # save it
 
 		# redirect to the new round page
-		return redirect('/rounds/%s' % round.title)
+		return redirect('/rounds/%s' % round.slug)
 
 	else:
-
-		# for form management, checkboxes are weird (in wtforms)
-		# prepare checklist items for form
-		# you'll need to take the form checkboxes submitted
-		# and idea_form.categories list needs to be populated.
-		#if request.method=="POST" and request.form.getlist('categories'):
-			#for c in request.form.getlist('categories'):
-				#idea_form.categories.append_entry(c)
-
-
 		# render the template
 		templateData = {
 			'rounds' : models.Round.objects(),
 			'form' : round_form
 		}
-		
-		# app.logger.debug(templateData)
 
 		return render_template("main.html", **templateData)
-
-
-@app.route("/rounds/<round_slug>")
-def round_display(round_slug):
-
-	# get round by round_slug
-	try:
-		roundsList = models.Round.objects(slug=round_slug)
-	except:
-		abort(404)
-
-	# prepare template data
-	templateData = {
-		'round' : roundsList[0]
-	}
-
-	# render and return the template
-	return render_template('idea_entry.html', **templateData)
+	
 
 @app.route("/rounds/edit/<round_id>", methods=['GET','POST'])
 def round_edit(round_id):
@@ -95,12 +66,11 @@ def round_edit(round_id):
 		# populate the RoundForm with incoming form data
 		roundForm = models.RoundForm(request.form)
 
-		if ideaForm.validate():
+		if RoundForm.validate():
 			updateData = {
-				'set__title' : request.form.get('title'),
-				'set__numQ' : request.form.get('number of questions'),
+				'set__title' : request.form.get('title')
 			}
-			idea.update(**updateData) # update the idea
+			round.update(**updateData) # update the idea
 			
 			# flash message
 			flash('Round updated')
@@ -135,45 +105,74 @@ def round_edit(round_id):
 		return render_template('idea_edit.html', **templateData)
 
 
-@app.route("/rounds/<round_id>/questions", methods=['POST'])
-def round_questions(round_id):
+@app.route("/rounds/<round_id>/tokens", methods=['POST'])
+def round_tokens(round_id):
 
-	#for n in range(round.numQ):
-	qText = request.form.get('qText')
-	yesTokens = request.form.get('0 to 5')
-	noTokens = request.form.get('0 to 5')
+	token = request.form.get('token')
 
-	if question == '' or yesTokens == '' or noTokens == '':
-		# no name or comment, return to page
+	if token == '':
+		# no token, return to page
 		return redirect(request.referrer)
 
 
 	#get the round by id
 	try:
-		idea = models.Round.objects.get(id=round_id)
+		round = models.Round.objects.get(id=round_id)
 	except:
 		# error, return to where you came from
 		return redirect(request.referrer)
 
 
-	# create questions
-	yCount = 0
-	
-	for n in range(round.numQ):
-		question[n] = models.Question()
-		question[n].qText = request.form.get('qText')
-		question[n].yesTokens = request.form.get('0 to 5')
-		question[n].noTokens = request.form.get('0 to 5')			
-		# append comment to idea
-		round.questions.append(question[n])
-		yCount += question[n].yesTokens
+	# create tokens
+	token = models.Token()
+	token.token = request.form.get('token')
 		
-	round.maxTokens = yCount
+		
+	# append question to round
+	round.tokens.append(token)
 
 	# save it
 	round.save()
 
-	return redirect('/rounds/%s' % round.slug)
+	return redirect('/rounds/%s' % round.id)
+	
+	
+@app.route("/rounds/<round_id>/questions", methods=['POST'])
+def round_questions(round_id):
+
+	question = request.form.get('question text')
+	#tokenName = request.form.get('token name')
+	#yesVal = request.form.get('yesVal')
+	#noVal = request.form.get('noVal')
+
+	if question == '':
+		# no tokens, return to page
+		return redirect(request.referrer)
+
+
+	#get the round by id
+	try:
+		round = models.Round.objects.get(id=round_id)
+	except:
+		# error, return to where you came from
+		return redirect(request.referrer)
+
+
+	# create question
+	question = models.Question()
+	question.qText = request.form.get('question')
+	#question.tokenName = request.form.get('token name')
+	#token.yesVal = request.form.get('yes value')
+	#token.noVal = request.form.get('no value')
+		
+		
+	# append question to round
+	round.questions.append(question)
+
+	# save it
+	round.save()
+
+	return redirect('/rounds/%s' % round.id)
 
 
 from flask import jsonify

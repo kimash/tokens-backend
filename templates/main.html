@@ -12,11 +12,8 @@
 		
 		{% for round in rounds %}
 			<h4>
-				<a href="/rounds/{{ round.slug }}">{{ round.title }}</a>
+				<a href="/rounds/edit/{{ round.id }}">{{ round.title }}</a>
 			</h4>
-			<p>Number of Questions: {{ round.numQ }}</p>
-			<p><a class="label" href="/rounds/{{ round.slug }}/edit">edit</a></p>
-
 			<hr/>
 		{% endfor %}
 		
@@ -28,7 +25,7 @@
 		<form method="POST" role="form">
 			{{ form.csrf_token }}
 
-			<legend><h3>Add New Round</h3></legend>
+			<legend><h3>Create New Round</h3></legend>
 
 			{% if form.errors %}
 			    <ul class="errors">
@@ -48,17 +45,6 @@
 				<input type="text" id="title" name="title" class="form-control">
 				-->
 			</div>
-			
-			<div class="form-group">
-				{{ form.numQ.label('Number of Questions') }}
-				{{ form.numQ(class='form-control', type='text') }}
-				<!-- <label for="idea">Idea description</label>
-				<textarea name="idea" id="idea" class="form-control"></textarea>
-				-->
-			</div>
-
-
-
 			<button type="submit" class="btn btn-primary">Add Round</button>
 		</form>
 	</div>
