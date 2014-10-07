@@ -12,7 +12,7 @@
 		
 		{% for round in rounds %}
 			<h4>
-				<a href="/rounds/edit/{{ round.id }}">{{ round.title }}</a>
+				<a href="/rounds/{{ round.slug }}">{{ round.title }}</a>
 			</h4>
 			<hr/>
 		{% endfor %}

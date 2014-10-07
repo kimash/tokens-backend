@@ -52,7 +52,25 @@ def index():
 		}
 
 		return render_template("main.html", **templateData)
-	
+
+
+@app.route("/rounds/<round_slug>")
+def round_display(round_slug):
+
+	# get round by round_slug
+	try:
+		roundsList = models.Round.objects(slug=round_slug)
+	except:
+		abort(404)
+
+	# prepare template data
+	templateData = {
+		'round' : roundsList[0]
+	}
+
+	# render and return the template
+	return render_template('idea_entry.html', **templateData)
+		
 
 @app.route("/rounds/edit/<round_id>", methods=['GET','POST'])
 def round_edit(round_id):
@@ -134,7 +152,7 @@ def round_tokens(round_id):
 	# save it
 	round.save()
 
-	return redirect('/rounds/%s' % round.id)
+	return redirect('/rounds/%s' % round.slug)
 	
 	
 @app.route("/rounds/<round_id>/questions", methods=['POST'])
@@ -172,7 +190,7 @@ def round_questions(round_id):
 	# save it
 	round.save()
 
-	return redirect('/rounds/%s' % round.id)
+	return redirect('/rounds/%s' % round.slug)
 
 
 from flask import jsonify
@@ -217,7 +235,7 @@ def data_rounds():
 def data_round(id):
 		
 
-	# query for the ideas - return oldest first, limit 10
+	# query for the ideas
 	try:
 		round = models.Round.objects.get(id=id)
 		if round:

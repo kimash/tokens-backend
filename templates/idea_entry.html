@@ -8,39 +8,49 @@
 	<!-- left column -->
 	<div class="col-md-12">
 		<h2>ROUND: {{ round.title }}</h2>
-		<p>
-			Tokens: {{ round.tokens }} 
-			(<a href="/rounds/edit/{{round.id}}">edit</a>)  
-			(<a href="/data/rounds/{{round.id}}">JSON</a>)  
-
-		</p>
+		(<a href="/rounds/edit/{{round.id}}">edit title</a>)
+		(<a href="/data/rounds/{{round.id}}">JSON</a>)
 		<hr>
+		<h3>Tokens ( {{ round.tokens|length }} )</h3> 
+		<div class="row">
+		<!-- DISPLAY TOKENS -->
+			<div class="col-md-5">
+				{% for token in round.tokens %}
+				<div class="comment">
+					<p>{{ token.name }}</p>
+				</div>
+				{% endfor %}
+			</div>
+			
+			<!-- ADD TOKEN -->
+			<div class="col-md-5">
+				<form method="POST" action="/rounds/{{ round.id }}/token">
+					<label for="name">Token name:</label>
+					<input type="text" id="token" name="token">
+					<br>					
+					<label>
+					<button type="submit" class="btn btn-success">Add Token</button>
+					</label>
+				</form>
+			</div>
+		</div>	
 		<h3>Questions ( {{ round.questions|length }} )</h3>
 		<div class="row">
-
 			<!-- DISPLAY QUESTIONS -->
 			<div class="col-md-5">
 				{% for question in round.questions %}
 				<div class="comment">
 					<p>Question: {{ question.qText }}</p>
-					<!--<p>Yes tokens: {{ question.yesTokens }}</p>
-					<p>No tokens: {{ question.noTokens }}</p>-->
 				</div>
-				
 				{% endfor %}
 			</div>
-
+			
 			<!-- ADD QUESTION -->
 			<div class="col-md-5">
 				<form method="POST" action="/rounds/{{ round.id }}/question">
 					<label for="qText">Question text:</label>
 					<input type="text" id="qText" name="qText">
 					<br>
-					<!--<label for="yesTokens">Yes Tokens</label>
-					<input type="text" id="yesTokens" name="yesTokens">
-					<label for="noTokens">No Tokens</label>
-					<input type="text" id="noTokens" name="noTokens">-->
-					
 					<label>
 					<button type="submit" class="btn btn-success">Add Question</button>
 					</label>
