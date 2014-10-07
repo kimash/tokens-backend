@@ -253,19 +253,26 @@ def roundToDict(round):
 	tmpRound = {
 		'id' : str(round.id),
 		'title' : round.title,
-		'numQ' : round.numQ,
-		'maxTokens' : round.maxTokens
+		'slug' : round.slug,
+		'questions' : round.questions,
+		'tokens' : round.tokens
 	}
 
 	# questions - embedded documents
-	tmpRound['questions'] = [] # list - will hold all comment dictionaries
+	tmpRound['questions'] = [] # list - will hold all question dictionaries
+	tmpRound['tokens'] = [] # ditto for tokens
 	
-	# loop through round questions
+	for t in round.tokens:
+		token_dict = {
+			'name' : t.name
+		}
+	
+		tmpRound['tokens'].append(token_dict)
+	
 	for q in round.questions:
 		question_dict = {
-			'text' : q.qText,
-			'yesTokens' : q.yesTokens,
-			'noTokens' : q.noTokens
+			'qText' : q.qText,
+			'tokenVals' : q.tokenVals,
 		}
 
 		# append comment_dict to ['comments']
