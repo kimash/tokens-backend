@@ -19,14 +19,13 @@ class Question(EmbeddedDocument):
 	
 class Round(Document):
 	title = StringField(max_length=120)	# give the round a title
-	#numQ = IntField(min_value=1)	# number of questions in round
 	slug = StringField()	# slug for URL
 	questions = ListField( EmbeddedDocumentField(Question) )	# list of questions
 	tokens = ListField( ReferenceField(Token) ) # allows users to specify tokens for round
 
 # Validation Form for above data
 RoundForm = model_form(Round)
-#QForm = model_form(Question)
+TokenForm = model_form(Token)
 
 
 

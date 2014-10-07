@@ -36,8 +36,8 @@ def index():
 		round = models.Round()
 		round.title = request.form.get('title','no title')
 		round.slug = slugify(round.title)
-		round.questions = {}
-		round.tokens = {}
+		#round.questions = {}
+		#round.tokens = {}
 		
 		round.save() # save it
 
@@ -126,7 +126,7 @@ def round_edit(round_id):
 @app.route("/rounds/<round_id>/tokens", methods=['POST'])
 def round_tokens(round_id):
 
-	token = request.form.get('token')
+	token_form = models.TokenForm(request.form)
 
 	if token == '':
 		# no token, return to page
@@ -146,11 +146,11 @@ def round_tokens(round_id):
 	token.token = request.form.get('token')
 		
 		
-	# append question to round
-	round.tokens.append(token)
+	# append question to token list
+	tokens.append(token)
 
 	# save it
-	round.save()
+	token.save()
 
 	return redirect('/rounds/%s' % round.slug)
 	
