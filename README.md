@@ -10,13 +10,13 @@ This web UI allows users to create a series of game rounds for a public policy t
 * Should we build more schools?
 
 	- income tax: Yes: +5, No: -3 
-    - education level: Yes: +3, No: -4 
+	- education level: Yes: +3, No: -4 
     - public health: Yes: +2, No: -5 
     - entrepreneurship: Yes: +3, No: -1 
     - community art: Yes: -3, No: +4 
     - immigration: Yes: 0, No: 0
     
-Front-end implementation can be found here:
+[Front-end implementation with OpenFrameworks] (https://github.com/kimash/tokens-frontendOF)
 
 ### License
 

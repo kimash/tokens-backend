@@ -123,7 +123,7 @@ def round_edit(round_id):
 		return render_template('idea_edit.html', **templateData)
 
 
-@app.route("/rounds/<round_id>/tokens", methods=['POST'])
+@app.route("/rounds/<round_id>/tokens", methods=['GET', 'POST'])
 def round_tokens(round_id):
 
 	token_form = models.TokenForm(request.form)
@@ -156,15 +156,15 @@ def round_tokens(round_id):
 	
 	
 @app.route("/rounds/<round_id>/questions", methods=['POST'])
-def round_questions(round_id):
+def round_question(round_id):
 
-	question = request.form.get('question text')
+	question = request.form.get('question')
 	#tokenName = request.form.get('token name')
 	#yesVal = request.form.get('yesVal')
 	#noVal = request.form.get('noVal')
 
 	if question == '':
-		# no tokens, return to page
+		# no question, return to page
 		return redirect(request.referrer)
 
 
